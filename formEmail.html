@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <section id='header'>
+        <h1>Email Collection</h1>
+    </section>
+    <section class="form">
+        <form action="" method="POST" id="form-1">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="email" name="email" placeholder="ex: ab.cd@mail.com"/>
+                <span class="form-message"></span>
+            </div>
+            <div class="form-group">
+                <label>Confirm your email</label>
+                <input type="confirmEmail" id="confirmEmail" name="confirmEmail" placeholder="ex: ab.cd@mail.com"/>
+                <span class="form-message"></span>
+            </div>
+            <button class="form-submit">Submit</button>
+        </form>
+    </section>
+    <script src="./validator.js"></script>
+    <script>
+        Validator({
+            form: "#form-1",
+            errElement: ".form-message",
+            rules: [
+                Validator.isRequired('#email'),
+                Validator.isRequired('#confirmEmail'),
+                Validator.isEmail('#email'),
+                Validator.isEmail('#confirmEmail'),
+                Validator.isConfirmed('#confirmEmail',()=>(document.getElementById('email').value)),
+            ],
+            onSubmit: (data, api, inputElementList) => {
+                const option = {
+                    method: "POST",
+                    headers: {
+                    "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                };
+                fetch(api+'/email-collection', option)
+                    .then((res) => res.json)
+                    .then(()=>{
+                        inputElementList.forEach(element => {
+                            element.value='';
+                        });
+                    })
+                    .catch((err)=> console.log(err));
+            }
+        })
+    </script>
+</body>
+</html>
